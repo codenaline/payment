@@ -22,8 +22,3 @@ type Verifier interface {
 type Refunder interface {
 	Refund(context.Context, RefundRequest) (RefundResponse, error)
 }
-
-// Inquirer retrieves transactions when supported by a provider.
-type Inquirer interface {
-	Inquiry(context.Context, InquiryRequest) (Transaction, error)
-}

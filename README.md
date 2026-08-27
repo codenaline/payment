@@ -143,10 +143,7 @@ if errors.Is(err, payment.ErrUnsupported) {
 	// The configured gateway does not support refunds.
 }
 ```
-
-`FindTransaction` follows the same convention and returns
 `payment.ErrUnsupported` when the gateway does not implement
-`payment.Inquirer`.
 
 ## Error handling
 
@@ -238,7 +235,7 @@ func (*CustomGateway) Verify(
 client := payment.NewClient(&CustomGateway{})
 ```
 
-Implement `payment.Refunder` or `payment.Inquirer` when the provider
+Implement `payment.Refunder` when the provider
 supports those optional operations.
 
 ## Design principles

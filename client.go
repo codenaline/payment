@@ -34,13 +34,3 @@ func (c *Client) Refund(ctx context.Context, request RefundRequest) (RefundRespo
 	}
 	return refunder.Refund(ctx, request)
 }
-
-// Inquiry retrieves a transaction if the client's gateway supports
-// transaction lookup.
-func (c *Client) Inquiry(ctx context.Context, req InquiryRequest) (Transaction, error) {
-	inquirer, ok := c.gateway.(Inquirer)
-	if !ok {
-		return Transaction{}, ErrUnsupported
-	}
-	return inquirer.Inquiry(ctx, req)
-}
