@@ -24,6 +24,21 @@ type apiError struct {
 	Message string `json:"message"`
 }
 
+type verifyPayload struct {
+	MerchantID string `json:"merchant_id"`
+	Amount     int64  `json:"amount"`
+	Authority  string `json:"authority"`
+}
+
+type verifyResponse struct {
+	Data struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+		RefID   int64  `json:"ref_id"`
+	} `json:"data"`
+	Errors json.RawMessage `json:"errors"`
+}
+
 func decodeAPIError(raw json.RawMessage) apiError {
 	var result apiError
 	_ = json.Unmarshal(raw, &result)
