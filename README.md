@@ -49,6 +49,7 @@ func main() {
 
 	client := payment.NewClient(gateway)
 	result, err := client.Purchase(context.Background(), payment.PurchaseRequest{
+		OrderID: "1234",
 		Amount: payment.Money{
 			Amount:   100_000,
 			Currency: "IRR",

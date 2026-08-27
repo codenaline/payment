@@ -27,6 +27,7 @@ type Money struct {
 
 // PurchaseRequest contains the information needed to initiate a payment.
 type PurchaseRequest struct {
+	OrderID     string
 	Amount      Money
 	CallbackURL string
 	Description string
