@@ -1,6 +1,17 @@
-<img width="1092" height="728" alt="Image" src="https://github.com/user-attachments/assets/5fc8ef9a-307b-4bbb-90fe-e54ba6bb0ee6" />
 
-
+<p align="center">
+  <a href="https://github.com/codenaline/payment" target="_blank" rel="noopener noreferrer">
+    <img width="1774" height="887" alt="Image" src="https://github.com/user-attachments/assets/5fc8ef9a-307b-4bbb-90fe-e54ba6bb0ee6" />
+  </a>
+</p>
+<br/>
+<p align="center">
+[![CI](https://github.com/codenaline/payment/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/codenaline/payment/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/codenaline/payment/graph/badge.svg)](https://codecov.io/gh/codenaline/payment)
+[![Go Reference](https://pkg.go.dev/badge/github.com/codenaline/payment.svg)](https://pkg.go.dev/github.com/codenaline/payment)
+[![Go Version](https://img.shields.io/badge/go-%3E%3D1.22-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+</p>
 # Payment
 
 `payment` is a provider-neutral payment package for Go. It defines a small set
