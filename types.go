@@ -1,5 +1,7 @@
 package payment
 
+import "time"
+
 // Status describes the current state of a transaction.
 type Status string
 
@@ -63,7 +65,11 @@ type RefundResponse struct {
 
 // Transaction represents a payment-provider transaction.
 type Transaction struct {
-	ID     string
-	Amount Money
-	Status Status
+	ID          string
+	Amount      Money
+	Status      Status
+	ReferenceID string
+	Provider    string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
