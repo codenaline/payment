@@ -30,6 +30,10 @@ const (
 	CodeTransactionNotFound Code = -37
 	// CodeSystemError indicates a NextPay system failure.
 	CodeSystemError Code = -42
+	// CodeRefunded indicates that a payment was refunded successfully.
+	CodeRefunded Code = -90
+	// CodeRefundFailed indicates that a refund failed.
+	CodeRefundFailed Code = -91
 )
 
 // Error represents an error returned by NextPay.

@@ -90,6 +90,8 @@ func message(code Code) string {
 		return "transaction not found"
 	case CodeSystemError:
 		return "NextPay system error"
+	case CodeRefundFailed:
+		return "refund failed"
 	default:
 		return "NextPay request failed"
 	}
