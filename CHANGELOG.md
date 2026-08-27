@@ -7,6 +7,8 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-28
+
 ### Added
 
 - Provider-neutral gateway, client, transaction, money, and status contracts.
@@ -22,4 +24,5 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 - Bounded response-body handling and strict HTTP response validation.
 
-[Unreleased]: https://github.com/codenaline/payment/commits/main
+[Unreleased]: https://github.com/codenaline/payment/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/codenaline/payment/releases/tag/v0.1.0
