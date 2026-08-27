@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question
+    url: https://github.com/codenaline/payment/discussions/new?category=q-a
+    about: Ask the community for help
+  - name: Report a security issue
+    url: https://github.com/codenaline/payment/security/advisories/new
+    about: Privately report a security vulnerability

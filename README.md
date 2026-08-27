@@ -9,7 +9,7 @@
 [![CI](https://github.com/codenaline/payment/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/codenaline/payment/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/codenaline/payment/graph/badge.svg)](https://codecov.io/gh/codenaline/payment)
 [![Go Reference](https://pkg.go.dev/badge/github.com/codenaline/payment.svg)](https://pkg.go.dev/github.com/codenaline/payment)
-[![Go Version](https://img.shields.io/badge/go-%3E%3D1.22-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Go Version](https://img.shields.io/badge/go-%3E%3D1.24-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 </p>
 # Payment

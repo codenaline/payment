@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a reproducible payment package defect
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, authorities, or customer payment data.
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Provider
+      options:
+        - Core package
+        - Zarinpal
+        - NextPay
+        - Custom gateway
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Use fake values and a local HTTP server where possible.
+      render: go
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+      placeholder: v0.1.0 or commit SHA
+    validations:
+      required: true
+  - type: input
+    id: go-version
+    attributes:
+      label: Go version
+      description: Paste the output of `go version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Provider environment
+      options:
+        - Not applicable
+        - Sandbox
+        - Production
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Sanitized error details
+      description: Include portable and provider error details with secrets removed.
+    validations:
+      required: false
