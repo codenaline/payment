@@ -72,9 +72,9 @@ func TestVerifyReturnsGatewayError(t *testing.T) {
 	if !errors.Is(err, payment.ErrTransactionNotFound) {
 		t.Fatalf("Verify() error = %v, want ErrTransactionNotFound", err)
 	}
-	code, ok := CodeOf(err)
-	if !ok || code != CodeRequestArchived {
-		t.Fatalf("CodeOf() = %q, %t; want %q, true", code, ok, CodeRequestArchived)
+	var providerError *Error
+	if !errors.As(err, &providerError) || providerError.Code != CodeRequestArchived {
+		t.Fatalf("errors.As() = %#v, want CodeRequestArchived", providerError)
 	}
 }
 

@@ -63,9 +63,9 @@ func TestPurchaseReturnsGatewayError(t *testing.T) {
 	if !errors.Is(err, payment.ErrInvalidRequest) {
 		t.Fatalf("Purchase() error = %v, want ErrInvalidRequest", err)
 	}
-	code, ok := CodeOf(err)
-	if !ok || code != CodeValidationFailed {
-		t.Fatalf("CodeOf() = %q, %t; want %q, true", code, ok, CodeValidationFailed)
+	var providerError *Error
+	if !errors.As(err, &providerError) || providerError.Code != CodeValidationFailed {
+		t.Fatalf("errors.As() = %#v, want CodeValidationFailed", providerError)
 	}
 }
 
