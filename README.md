@@ -18,10 +18,13 @@ by creating one immutable `payment.Client` for each gateway.
 go get github.com/codenaline/payment
 ```
 
-Provider packages are imported separately. Zarinpal is currently included:
+Provider packages are imported separately. Zarinpal and NextPay are currently included:
 
 ```go
-import "github.com/codenaline/payment/zarinpal"
+import (
+	"github.com/codenaline/payment/nextpay"
+	"github.com/codenaline/payment/zarinpal"
+)
 ```
 
 ## Quick start
@@ -107,6 +110,13 @@ if err != nil {
 	return err
 }
 
+nextpayGateway, err := nextpay.New(nextpay.Config{
+	APIKey: "nextpay-api-key",
+})
+if err != nil {
+	return err
+}
+
 zarinpalClient := payment.NewClient(zarinpalGateway)
 nextpayClient := payment.NewClient(nextpayGateway)
 
@@ -184,6 +194,21 @@ gateway, err := zarinpal.New(zarinpal.Config{
 
 `Sandbox` is optional and defaults to `false`. `HTTPClient` is also optional;
 when omitted, Zarinpal uses an HTTP client with a 30-second timeout.
+
+## NextPay configuration
+
+Configure NextPay with its API key and, optionally, a custom HTTP client:
+
+```go
+gateway, err := nextpay.New(nextpay.Config{
+	APIKey:     "your-api-key",
+	HTTPClient: httpClient,
+})
+```
+
+NextPay accepts `IRR` and `IRT` amounts. It requires `PurchaseRequest.OrderID`
+when creating a transaction token. The driver also implements
+`payment.Refunder`; NextPay limits refunds to the window defined by its API.
 
 ## Custom gateways
 
