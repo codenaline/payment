@@ -31,8 +31,14 @@ func (g *Gateway) post(ctx context.Context, path string, form url.Values, result
 	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
 		return fmt.Errorf("%w: unexpected HTTP status %s", payment.ErrProvider, response.Status)
 	}
-	decoder := json.NewDecoder(io.LimitReader(response.Body, maxResponseSize))
-	if err := decoder.Decode(result); err != nil {
+	responseBody, err := io.ReadAll(io.LimitReader(response.Body, maxResponseSize+1))
+	if err != nil {
+		return fmt.Errorf("%w: read response: %w", payment.ErrNetwork, err)
+	}
+	if len(responseBody) > maxResponseSize {
+		return fmt.Errorf("%w: response exceeds %d bytes", payment.ErrProvider, maxResponseSize)
+	}
+	if err := json.Unmarshal(responseBody, result); err != nil {
 		return fmt.Errorf("%w: decode response: %w", payment.ErrProvider, err)
 	}
 	return nil
