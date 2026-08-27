@@ -62,7 +62,7 @@ func TestVerifyReturnsGatewayError(t *testing.T) {
 	t.Parallel()
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		_, _ = w.Write([]byte(`{"data":{},"errors":{"code":-54,"message":"amount mismatch"}}`))
+		_, _ = w.Write([]byte(`{"data":{},"errors":{"code":-54,"message":"request archived"}}`))
 	}))
 	defer server.Close()
 	gateway, _ := New("merchant", WithHTTPClient(server.Client()))
@@ -72,9 +72,9 @@ func TestVerifyReturnsGatewayError(t *testing.T) {
 	if !errors.Is(err, payment.ErrVerificationFailed) {
 		t.Fatalf("Verify() error = %v, want ErrVerificationFailed", err)
 	}
-	var providerErr *payment.Error
-	if !errors.As(err, &providerErr) || providerErr.Code != "-54" {
-		t.Fatalf("Verify() error = %#v, want Zarinpal code -54", err)
+	code, ok := CodeOf(err)
+	if !ok || code != CodeRequestArchived {
+		t.Fatalf("CodeOf() = %q, %t; want %q, true", code, ok, CodeRequestArchived)
 	}
 }
 
