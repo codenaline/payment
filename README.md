@@ -37,14 +37,30 @@ import (
 )
 ```
 
-## Supported providers
+## Supported drivers
 
 | Provider | Purchase | Verify | Refund | Currencies | Sandbox |
 | --- | :---: | :---: | :---: | --- | :---: |
-| ZarinPal | Yes | Yes | No | IRR | Yes |
-| NextPay | Yes | Yes | Yes | IRR, IRT | No |
+| [ZarinPal](zarinpal) | Yes | Yes | No | IRR | Yes |
+| [NextPay](nextpay) | Yes | Yes | Yes | IRR, IRT | No |
 
 Refund support is exposed as an optional capability. A custom gateway can implement the core `payment.Gateway` interface and, when applicable, `payment.Refunder`.
+
+## Upcoming drivers
+
+The following drivers are candidates for future releases:
+
+- Zibal
+- IDPay
+- Pay.ir
+- Stripe
+
+This list is not a delivery commitment and has no fixed order. If you need one
+of these drivers—or another provider—you are welcome to implement it and
+[create a pull request](https://github.com/codenaline/payment/compare). Read the
+[contribution guide](CONTRIBUTING.md) first, and open a
+[provider integration proposal](https://github.com/codenaline/payment/issues/new?template=feature_request.yml)
+when the API or expected behavior needs discussion.
 
 ## Quick start
 
@@ -268,12 +284,14 @@ Applications remain responsible for:
 - Logging, metrics, and tracing
 - Fulfillment and all other business rules
 
-## Contributing and support
+## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a change. Use [GitHub Discussions](https://github.com/codenaline/payment/discussions) for usage questions and [GitHub Issues](https://github.com/codenaline/payment/issues) for reproducible defects.
+Pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-Security issues must be reported privately according to [SECURITY.md](SECURITY.md).
+## Credits
+
+- [Mahdi Rezaei](https://github.com/mahdirezaei-dev)
 
 ## License
 
-`payment` is available under the [MIT License](LICENSE).
+The MIT License. See [LICENSE](LICENSE) for details.
