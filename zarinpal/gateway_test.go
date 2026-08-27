@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/codenaline/payment"
 )
@@ -11,17 +12,21 @@ import (
 func TestNewRequiresMerchantID(t *testing.T) {
 	t.Parallel()
 
-	_, err := New(" ")
+	_, err := New(Config{MerchantID: " "})
 	if !errors.Is(err, payment.ErrInvalidRequest) {
 		t.Fatalf("New() error = %v, want ErrInvalidRequest", err)
 	}
 }
 
-func TestNewAppliesOptions(t *testing.T) {
+func TestNewAppliesConfig(t *testing.T) {
 	t.Parallel()
 
 	client := &http.Client{}
-	gateway, err := New("merchant", WithHTTPClient(client), WithSandbox())
+	gateway, err := New(Config{
+		MerchantID: "merchant",
+		Sandbox:    true,
+		HTTPClient: client,
+	})
 	if err != nil {
 		t.Fatalf("New() error = %v", err)
 	}
@@ -33,11 +38,14 @@ func TestNewAppliesOptions(t *testing.T) {
 	}
 }
 
-func TestWithHTTPClientRejectsNil(t *testing.T) {
+func TestNewProvidesDefaultHTTPClient(t *testing.T) {
 	t.Parallel()
 
-	_, err := New("merchant", WithHTTPClient(nil))
-	if !errors.Is(err, payment.ErrInvalidRequest) {
-		t.Fatalf("New() error = %v, want ErrInvalidRequest", err)
+	gateway, err := New(Config{MerchantID: "merchant"})
+	if err != nil {
+		t.Fatalf("New() error = %v", err)
+	}
+	if gateway.client == nil || gateway.client.Timeout != 30*time.Second {
+		t.Fatalf("New() HTTP client = %#v, want 30 second timeout", gateway.client)
 	}
 }

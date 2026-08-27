@@ -28,7 +28,7 @@ func TestVerify(t *testing.T) {
 	}))
 	defer server.Close()
 
-	gateway, _ := New("merchant", WithHTTPClient(server.Client()))
+	gateway, _ := New(Config{MerchantID: "merchant", HTTPClient: server.Client()})
 	gateway.apiBaseURL = server.URL
 	transaction, err := gateway.Verify(t.Context(), payment.VerifyRequest{
 		TransactionID: "A0001",
@@ -49,7 +49,7 @@ func TestVerifyAcceptsAlreadyVerified(t *testing.T) {
 		_, _ = w.Write([]byte(`{"data":{"code":101,"ref_id":42},"errors":[]}`))
 	}))
 	defer server.Close()
-	gateway, _ := New("merchant", WithHTTPClient(server.Client()))
+	gateway, _ := New(Config{MerchantID: "merchant", HTTPClient: server.Client()})
 	gateway.apiBaseURL = server.URL
 
 	transaction, err := gateway.Verify(t.Context(), validVerifyRequest())
@@ -65,7 +65,7 @@ func TestVerifyReturnsGatewayError(t *testing.T) {
 		_, _ = w.Write([]byte(`{"data":{},"errors":{"code":-54,"message":"request archived"}}`))
 	}))
 	defer server.Close()
-	gateway, _ := New("merchant", WithHTTPClient(server.Client()))
+	gateway, _ := New(Config{MerchantID: "merchant", HTTPClient: server.Client()})
 	gateway.apiBaseURL = server.URL
 
 	_, err := gateway.Verify(t.Context(), validVerifyRequest())
@@ -81,7 +81,7 @@ func TestVerifyReturnsGatewayError(t *testing.T) {
 func TestVerifyValidatesRequest(t *testing.T) {
 	t.Parallel()
 
-	gateway, _ := New("merchant")
+	gateway, _ := New(Config{MerchantID: "merchant"})
 	request := validVerifyRequest()
 	request.TransactionID = ""
 	_, err := gateway.Verify(t.Context(), request)

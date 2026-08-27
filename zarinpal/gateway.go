@@ -24,28 +24,26 @@ type Gateway struct {
 	client     *http.Client
 }
 
-// New creates a Zarinpal gateway for merchantID.
-func New(merchantID string, options ...Option) (*Gateway, error) {
-	if strings.TrimSpace(merchantID) == "" {
+// New creates a Zarinpal gateway from config.
+func New(config Config) (*Gateway, error) {
+	if strings.TrimSpace(config.MerchantID) == "" {
 		return nil, fmt.Errorf("%w: Zarinpal merchant ID is required", payment.ErrInvalidRequest)
 	}
 
-	gateway := &Gateway{
-		merchantID: merchantID,
-		apiBaseURL: defaultAPIBaseURL,
-		payBaseURL: defaultPayBaseURL,
-		client: &http.Client{
-			Timeout: 30 * time.Second,
-		},
+	client := config.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 30 * time.Second}
 	}
 
-	for _, option := range options {
-		if option == nil {
-			return nil, fmt.Errorf("%w: nil Zarinpal option", payment.ErrInvalidRequest)
-		}
-		if err := option(gateway); err != nil {
-			return nil, err
-		}
+	gateway := &Gateway{
+		merchantID: config.MerchantID,
+		apiBaseURL: defaultAPIBaseURL,
+		payBaseURL: defaultPayBaseURL,
+		client:     client,
+	}
+	if config.Sandbox {
+		gateway.apiBaseURL = sandboxAPIBaseURL
+		gateway.payBaseURL = sandboxPayBaseURL
 	}
 
 	return gateway, nil

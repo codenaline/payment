@@ -40,7 +40,9 @@ import (
 )
 
 func main() {
-	gateway, err := zarinpal.New("your-merchant-id")
+	gateway, err := zarinpal.New(zarinpal.Config{
+		MerchantID: "your-merchant-id",
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -97,7 +99,9 @@ Create an independent client for every configured gateway. The application
 owns gateway selection and routing:
 
 ```go
-zarinpalGateway, err := zarinpal.New("zarinpal-merchant-id")
+zarinpalGateway, err := zarinpal.New(zarinpal.Config{
+	MerchantID: "zarinpal-merchant-id",
+})
 if err != nil {
 	return err
 }
@@ -165,27 +169,20 @@ if errors.As(err, &providerError) {
 }
 ```
 
-## Zarinpal options
+## Zarinpal configuration
 
-Use the sandbox during development:
-
-```go
-gateway, err := zarinpal.New(
-	"your-merchant-id",
-	zarinpal.WithSandbox(),
-)
-```
-
-An application can also supply its own `http.Client`:
+Use `zarinpal.Config` for provider-specific settings:
 
 ```go
-gateway, err := zarinpal.New(
-	"your-merchant-id",
-	zarinpal.WithHTTPClient(httpClient),
-)
+gateway, err := zarinpal.New(zarinpal.Config{
+	MerchantID: "your-merchant-id",
+	Sandbox:    true,
+	HTTPClient: httpClient,
+})
 ```
 
-The default client has a 30-second timeout.
+`Sandbox` is optional and defaults to `false`. `HTTPClient` is also optional;
+when omitted, Zarinpal uses an HTTP client with a 30-second timeout.
 
 ## Custom gateways
 

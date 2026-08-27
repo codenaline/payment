@@ -29,7 +29,7 @@ func TestPurchase(t *testing.T) {
 	}))
 	defer server.Close()
 
-	gateway, _ := New("merchant", WithHTTPClient(server.Client()))
+	gateway, _ := New(Config{MerchantID: "merchant", HTTPClient: server.Client()})
 	gateway.apiBaseURL = server.URL
 	gateway.payBaseURL = "https://pay.example"
 
@@ -56,7 +56,7 @@ func TestPurchaseReturnsGatewayError(t *testing.T) {
 		_, _ = w.Write([]byte(`{"data":{},"errors":{"code":-9,"message":"validation failed"}}`))
 	}))
 	defer server.Close()
-	gateway, _ := New("merchant", WithHTTPClient(server.Client()))
+	gateway, _ := New(Config{MerchantID: "merchant", HTTPClient: server.Client()})
 	gateway.apiBaseURL = server.URL
 
 	_, err := gateway.Purchase(t.Context(), validPurchaseRequest())
@@ -72,7 +72,7 @@ func TestPurchaseReturnsGatewayError(t *testing.T) {
 func TestPurchaseValidatesRequest(t *testing.T) {
 	t.Parallel()
 
-	gateway, _ := New("merchant")
+	gateway, _ := New(Config{MerchantID: "merchant"})
 	request := validPurchaseRequest()
 	request.Amount.Amount = 0
 	_, err := gateway.Purchase(t.Context(), request)
