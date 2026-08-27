@@ -28,7 +28,7 @@ func (g *Gateway) Purchase(ctx context.Context, request payment.PurchaseRequest)
 	if request.Description != "" {
 		form.Set("payer_desc", request.Description)
 	}
-	for _, field := range []string{"customer_phone", "payer_name", "auto_verify", "allowed_card"} {
+	for _, field := range []string{"customer_phone", "payer_name", "allowed_card"} {
 		if value := request.Metadata[field]; value != "" {
 			form.Set(field, value)
 		}

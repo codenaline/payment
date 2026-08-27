@@ -29,7 +29,7 @@ func TestRefund(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Refund() error = %v", err)
 	}
-	if result.TransactionID != "transaction-token" || result.Amount.Amount != 12500 {
+	if result.ID != "" || result.TransactionID != "transaction-token" || result.Amount.Amount != 12500 {
 		t.Errorf("Refund() result = %+v", result)
 	}
 }

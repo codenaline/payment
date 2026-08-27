@@ -31,7 +31,6 @@ func (g *Gateway) Refund(ctx context.Context, request payment.RefundRequest) (pa
 	}
 
 	return payment.RefundResponse{
-		ID:            request.TransactionID,
 		TransactionID: request.TransactionID,
 		Amount:        request.Amount,
 	}, nil

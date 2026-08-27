@@ -19,7 +19,10 @@ func TestPurchase(t *testing.T) {
 		if err := r.ParseForm(); err != nil {
 			t.Errorf("ParseForm() error = %v", err)
 		}
-		if r.Form.Get("api_key") != "key" || r.Form.Get("order_id") != "order-1" || r.Form.Get("amount") != "12500" || r.Form.Get("currency") != "IRR" {
+		if r.Form.Get("auto_verify") != "" {
+			t.Errorf("request unexpectedly enables auto_verify")
+		}
+		if r.Form.Get("api_key") != "key" || r.Form.Get("order_id") != "order-1" || r.Form.Get("amount") != "12500" || r.Form.Get("currency") != "IRR" || r.Form.Get("customer_phone") != "09121234567" {
 			t.Errorf("request form = %v", r.Form)
 		}
 		_, _ = w.Write([]byte(`{"code":-1,"trans_id":"transaction-token"}`))
@@ -79,5 +82,9 @@ func validPurchaseRequest() payment.PurchaseRequest {
 		Amount:      payment.Money{Amount: 12500, Currency: "IRR"},
 		CallbackURL: "https://merchant.example/callback",
 		Description: "order",
+		Metadata: map[string]string{
+			"customer_phone": "09121234567",
+			"auto_verify":    "yes",
+		},
 	}
 }
