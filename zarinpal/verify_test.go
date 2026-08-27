@@ -72,8 +72,8 @@ func TestVerifyReturnsGatewayError(t *testing.T) {
 	if !errors.Is(err, payment.ErrVerificationFailed) {
 		t.Fatalf("Verify() error = %v, want ErrVerificationFailed", err)
 	}
-	var providerErr *Error
-	if !errors.As(err, &providerErr) || providerErr.Code != -54 {
+	var providerErr *payment.Error
+	if !errors.As(err, &providerErr) || providerErr.Code != "-54" {
 		t.Fatalf("Verify() error = %#v, want Zarinpal code -54", err)
 	}
 }

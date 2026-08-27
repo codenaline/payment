@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/codenaline/payment"
@@ -81,5 +82,12 @@ func validatePurchase(request payment.PurchaseRequest) error {
 }
 
 func purchaseError(code int, message string, cause error) error {
-	return &Error{Operation: "purchase", Code: code, Message: message, Kind: payment.ErrPurchaseFailed, Cause: cause}
+	return &payment.Error{Provider: providerName, Operation: "purchase", Code: providerErrorCode(code), Message: message, Kind: payment.ErrPurchaseFailed, Cause: cause}
+}
+
+func providerErrorCode(code int) string {
+	if code == 0 {
+		return ""
+	}
+	return strconv.Itoa(code)
 }
