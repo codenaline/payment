@@ -1,3 +1,6 @@
+<img width="1092" height="728" alt="Image" src="https://github.com/user-attachments/assets/5fc8ef9a-307b-4bbb-90fe-e54ba6bb0ee6" />
+
+
 # Payment
 
 `payment` is a provider-neutral payment package for Go. It defines a small set
