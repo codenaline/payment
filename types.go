@@ -39,12 +39,10 @@ type PurchaseResponse struct {
 	RedirectURL string
 }
 
-// VerifyRequest identifies a transaction and includes data returned by the
-// payment provider.
+// VerifyRequest contains the information needed to verify a transaction.
 type VerifyRequest struct {
 	TransactionID string
 	Amount        Money
-	Data          map[string]string
 }
 
 // RefundRequest contains the information needed to issue a full or partial

@@ -130,8 +130,7 @@ clients safe to use independently and keeps routing rules outside the package.
 
 ## Optional capabilities
 
-Every gateway supports purchasing and verification. Refunds and transaction
-lookup are optional capabilities:
+Every gateway supports purchasing and verification. Refunds are optional:
 
 ```go
 refund, err := client.Refund(ctx, payment.RefundRequest{
@@ -143,8 +142,6 @@ if errors.Is(err, payment.ErrUnsupported) {
 	// The configured gateway does not support refunds.
 }
 ```
-`payment.ErrUnsupported` when the gateway does not implement
-
 ## Error handling
 
 The root package exposes portable sentinel errors. Use `errors.Is` for logic
