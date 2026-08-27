@@ -79,7 +79,7 @@ func TestPurchaseValidatesRequest(t *testing.T) {
 func validPurchaseRequest() payment.PurchaseRequest {
 	return payment.PurchaseRequest{
 		OrderID:     "order-1",
-		Amount:      payment.Money{Amount: 12500, Currency: "IRR"},
+		Amount:      payment.Money{Amount: 12500, Currency: payment.CurrencyIRR},
 		CallbackURL: "https://merchant.example/callback",
 		Description: "order",
 		Metadata: map[string]string{

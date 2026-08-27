@@ -67,7 +67,7 @@ func validatePurchase(request payment.PurchaseRequest) error {
 	if request.Amount.Amount <= 0 {
 		return fmt.Errorf("%w: amount must be positive", payment.ErrInvalidRequest)
 	}
-	if !strings.EqualFold(request.Amount.Currency, "IRR") {
+	if !strings.EqualFold(string(request.Amount.Currency), string(payment.CurrencyIRR)) {
 		return fmt.Errorf("%w: Zarinpal requires IRR", payment.ErrInvalidRequest)
 	}
 	callback, err := url.ParseRequestURI(request.CallbackURL)

@@ -23,7 +23,7 @@ func (g *Gateway) Purchase(ctx context.Context, request payment.PurchaseRequest)
 		"order_id":     {request.OrderID},
 		"amount":       {strconv.FormatInt(request.Amount.Amount, 10)},
 		"callback_uri": {request.CallbackURL},
-		"currency":     {strings.ToUpper(request.Amount.Currency)},
+		"currency":     {strings.ToUpper(string(request.Amount.Currency))},
 	}
 	if request.Description != "" {
 		form.Set("payer_desc", request.Description)
@@ -61,8 +61,8 @@ func validatePurchase(request payment.PurchaseRequest) error {
 	if request.Amount.Amount <= 0 {
 		return fmt.Errorf("%w: amount must be positive", payment.ErrInvalidRequest)
 	}
-	currency := strings.ToUpper(request.Amount.Currency)
-	if currency != "IRR" && currency != "IRT" {
+	currency := strings.ToUpper(string(request.Amount.Currency))
+	if currency != string(payment.CurrencyIRR) && currency != string(payment.CurrencyIRT) {
 		return fmt.Errorf("%w: NextPay requires IRR or IRT", payment.ErrInvalidRequest)
 	}
 	callback, err := url.ParseRequestURI(request.CallbackURL)

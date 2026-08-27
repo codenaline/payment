@@ -57,6 +57,6 @@ func TestRefundReturnsProviderError(t *testing.T) {
 func validRefundRequest() payment.RefundRequest {
 	return payment.RefundRequest{
 		TransactionID: "transaction-token",
-		Amount:        payment.Money{Amount: 12500, Currency: "IRR"},
+		Amount:        payment.Money{Amount: 12500, Currency: payment.CurrencyIRR},
 	}
 }

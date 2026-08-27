@@ -20,7 +20,7 @@ func (g *Gateway) Verify(ctx context.Context, request payment.VerifyRequest) (pa
 		"api_key":  {g.apiKey},
 		"trans_id": {request.TransactionID},
 		"amount":   {strconv.FormatInt(request.Amount.Amount, 10)},
-		"currency": {strings.ToUpper(request.Amount.Currency)},
+		"currency": {strings.ToUpper(string(request.Amount.Currency))},
 	}
 	var response verifyResponse
 	if err := g.post(ctx, "/verify", form, &response); err != nil {
@@ -49,8 +49,8 @@ func validateVerify(request payment.VerifyRequest) error {
 	if request.Amount.Amount <= 0 {
 		return fmt.Errorf("%w: amount must be positive", payment.ErrInvalidRequest)
 	}
-	currency := strings.ToUpper(request.Amount.Currency)
-	if currency != "IRR" && currency != "IRT" {
+	currency := strings.ToUpper(string(request.Amount.Currency))
+	if currency != string(payment.CurrencyIRR) && currency != string(payment.CurrencyIRT) {
 		return fmt.Errorf("%w: NextPay requires IRR or IRT", payment.ErrInvalidRequest)
 	}
 	return nil

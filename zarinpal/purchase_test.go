@@ -34,7 +34,7 @@ func TestPurchase(t *testing.T) {
 	gateway.payBaseURL = "https://pay.example"
 
 	result, err := gateway.Purchase(t.Context(), payment.PurchaseRequest{
-		Amount:      payment.Money{Amount: 12500, Currency: "IRR"},
+		Amount:      payment.Money{Amount: 12500, Currency: payment.CurrencyIRR},
 		CallbackURL: "https://merchant.example/callback",
 		Description: "order 42",
 	})
@@ -83,7 +83,7 @@ func TestPurchaseValidatesRequest(t *testing.T) {
 
 func validPurchaseRequest() payment.PurchaseRequest {
 	return payment.PurchaseRequest{
-		Amount:      payment.Money{Amount: 1000, Currency: "IRR"},
+		Amount:      payment.Money{Amount: 1000, Currency: payment.CurrencyIRR},
 		CallbackURL: "https://merchant.example/callback",
 		Description: "order",
 	}

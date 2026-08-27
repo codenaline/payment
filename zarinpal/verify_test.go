@@ -32,7 +32,7 @@ func TestVerify(t *testing.T) {
 	gateway.apiBaseURL = server.URL
 	transaction, err := gateway.Verify(t.Context(), payment.VerifyRequest{
 		TransactionID: "A0001",
-		Amount:        payment.Money{Amount: 12500, Currency: "IRR"},
+		Amount:        payment.Money{Amount: 12500, Currency: payment.CurrencyIRR},
 	})
 	if err != nil {
 		t.Fatalf("Verify() error = %v", err)
@@ -93,6 +93,6 @@ func TestVerifyValidatesRequest(t *testing.T) {
 func validVerifyRequest() payment.VerifyRequest {
 	return payment.VerifyRequest{
 		TransactionID: "A0001",
-		Amount:        payment.Money{Amount: 1000, Currency: "IRR"},
+		Amount:        payment.Money{Amount: 1000, Currency: payment.CurrencyIRR},
 	}
 }

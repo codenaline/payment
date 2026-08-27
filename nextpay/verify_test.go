@@ -72,6 +72,6 @@ func TestVerifyValidatesRequest(t *testing.T) {
 func validVerifyRequest() payment.VerifyRequest {
 	return payment.VerifyRequest{
 		TransactionID: "transaction-token",
-		Amount:        payment.Money{Amount: 12500, Currency: "IRR"},
+		Amount:        payment.Money{Amount: 12500, Currency: payment.CurrencyIRR},
 	}
 }

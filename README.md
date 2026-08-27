@@ -55,7 +55,7 @@ func main() {
 		OrderID: "1234",
 		Amount: payment.Money{
 			Amount:   100_000,
-			Currency: "IRR",
+			Currency: payment.CurrencyIRR,
 		},
 		CallbackURL: "https://example.com/payments/callback",
 		Description: "Order #1234",
@@ -82,7 +82,7 @@ transaction, err := client.Verify(ctx, payment.VerifyRequest{
 	TransactionID: transactionID,
 	Amount: payment.Money{
 		Amount:   100_000,
-		Currency: "IRR",
+		Currency: payment.CurrencyIRR,
 	},
 })
 if err != nil {

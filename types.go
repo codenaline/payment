@@ -16,11 +16,20 @@ const (
 	StatusCanceled Status = "canceled"
 )
 
+// Currency is a payment currency code.
+// It remains open-ended so applications and third-party gateways can use
+// currencies that are not predefined by this package.
+type Currency string
+
+const (
+	CurrencyIRR Currency = "IRR"
+	CurrencyIRT Currency = "IRT"
+)
+
 // Money represents an amount in the currency's smallest unit.
-// For example, USD 10.50 is represented as Amount 1050 and Currency "USD".
 type Money struct {
 	Amount   int64
-	Currency string
+	Currency Currency
 }
 
 // PurchaseRequest contains the information needed to initiate a payment.

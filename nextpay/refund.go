@@ -19,7 +19,7 @@ func (g *Gateway) Refund(ctx context.Context, request payment.RefundRequest) (pa
 		"api_key":        {g.apiKey},
 		"trans_id":       {request.TransactionID},
 		"amount":         {strconv.FormatInt(request.Amount.Amount, 10)},
-		"currency":       {strings.ToUpper(request.Amount.Currency)},
+		"currency":       {strings.ToUpper(string(request.Amount.Currency))},
 		"refund_request": {"yes_money_back"},
 	}
 	var response verifyResponse
