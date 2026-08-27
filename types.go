@@ -1,5 +1,21 @@
 package payment
 
+// Status describes the current state of a transaction.
+type Status string
+
+const (
+	// StatusPending indicates that a transaction has not completed yet.
+	StatusPending Status = "pending"
+	// StatusPaid indicates that a transaction completed successfully.
+	StatusPaid Status = "paid"
+	// StatusFailed indicates that a transaction failed.
+	StatusFailed Status = "failed"
+	// StatusRefunded indicates that a transaction was refunded.
+	StatusRefunded Status = "refunded"
+	// StatusCanceled indicates that a transaction was canceled.
+	StatusCanceled Status = "canceled"
+)
+
 // Money represents an amount in the currency's smallest unit.
 // For example, USD 10.50 is represented as Amount 1050 and Currency "USD".
 type Money struct {
@@ -26,6 +42,7 @@ type PurchaseResponse struct {
 // payment provider.
 type VerifyRequest struct {
 	TransactionID string
+	Amount        Money
 	Data          map[string]string
 }
 
@@ -48,5 +65,5 @@ type RefundResponse struct {
 type Transaction struct {
 	ID     string
 	Amount Money
-	Status string
+	Status Status
 }
