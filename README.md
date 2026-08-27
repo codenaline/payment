@@ -146,7 +146,7 @@ if errors.Is(err, payment.ErrUnsupported) {
 
 `FindTransaction` follows the same convention and returns
 `payment.ErrUnsupported` when the gateway does not implement
-`payment.TransactionFinder`.
+`payment.Inquirer`.
 
 ## Error handling
 
@@ -238,7 +238,7 @@ func (*CustomGateway) Verify(
 client := payment.NewClient(&CustomGateway{})
 ```
 
-Implement `payment.Refunder` or `payment.TransactionFinder` when the provider
+Implement `payment.Refunder` or `payment.Inquirer` when the provider
 supports those optional operations.
 
 ## Design principles

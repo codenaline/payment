@@ -35,12 +35,12 @@ func (c *Client) Refund(ctx context.Context, request RefundRequest) (RefundRespo
 	return refunder.Refund(ctx, request)
 }
 
-// FindTransaction retrieves a transaction if the client's gateway supports
+// Inquiry retrieves a transaction if the client's gateway supports
 // transaction lookup.
-func (c *Client) FindTransaction(ctx context.Context, id string) (Transaction, error) {
-	finder, ok := c.gateway.(TransactionFinder)
+func (c *Client) Inquiry(ctx context.Context, req InquiryRequest) (Transaction, error) {
+	inquirer, ok := c.gateway.(Inquirer)
 	if !ok {
 		return Transaction{}, ErrUnsupported
 	}
-	return finder.FindTransaction(ctx, id)
+	return inquirer.Inquiry(ctx, req)
 }

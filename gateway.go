@@ -23,7 +23,7 @@ type Refunder interface {
 	Refund(context.Context, RefundRequest) (RefundResponse, error)
 }
 
-// TransactionFinder retrieves transactions when supported by a provider.
-type TransactionFinder interface {
-	FindTransaction(context.Context, string) (Transaction, error)
+// Inquirer retrieves transactions when supported by a provider.
+type Inquirer interface {
+	Inquiry(context.Context, InquiryRequest) (Transaction, error)
 }

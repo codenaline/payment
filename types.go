@@ -64,6 +64,10 @@ type RefundResponse struct {
 	Amount        Money
 }
 
+type InquiryRequest struct {
+	TransactionID string
+}
+
 // Transaction represents a payment-provider transaction.
 type Transaction struct {
 	ID          string
