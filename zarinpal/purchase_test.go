@@ -60,8 +60,8 @@ func TestPurchaseReturnsGatewayError(t *testing.T) {
 	gateway.apiBaseURL = server.URL
 
 	_, err := gateway.Purchase(t.Context(), validPurchaseRequest())
-	if !errors.Is(err, payment.ErrPurchaseFailed) {
-		t.Fatalf("Purchase() error = %v, want ErrPurchaseFailed", err)
+	if !errors.Is(err, payment.ErrInvalidRequest) {
+		t.Fatalf("Purchase() error = %v, want ErrInvalidRequest", err)
 	}
 	code, ok := CodeOf(err)
 	if !ok || code != CodeValidationFailed {

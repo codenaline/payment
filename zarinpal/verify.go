@@ -70,7 +70,7 @@ func validateVerify(request payment.VerifyRequest) error {
 }
 
 func verificationError(code int, message string, cause error) error {
-	return &payment.Error{Provider: providerName, Operation: "verification", Code: providerErrorCode(code), Message: message, Kind: payment.ErrVerificationFailed, Cause: cause}
+	return newError("verification", code, message, cause)
 }
 
 var _ payment.Gateway = (*Gateway)(nil)

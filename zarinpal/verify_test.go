@@ -69,8 +69,8 @@ func TestVerifyReturnsGatewayError(t *testing.T) {
 	gateway.apiBaseURL = server.URL
 
 	_, err := gateway.Verify(t.Context(), validVerifyRequest())
-	if !errors.Is(err, payment.ErrVerificationFailed) {
-		t.Fatalf("Verify() error = %v, want ErrVerificationFailed", err)
+	if !errors.Is(err, payment.ErrTransactionNotFound) {
+		t.Fatalf("Verify() error = %v, want ErrTransactionNotFound", err)
 	}
 	code, ok := CodeOf(err)
 	if !ok || code != CodeRequestArchived {
