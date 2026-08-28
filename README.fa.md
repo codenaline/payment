@@ -124,7 +124,7 @@ if transaction.Status == payment.StatusPaid {
 
 کدهای `100` (تأییدشده) و `101` (قبلاً تأییدشده) زرین‌پال هر دو یک تراکنش پرداخت‌شده و بدون خطا برمی‌گردانند.
 
-SEP پس از پرداخت یک `RefNum` جدید به callback ارسال می‌کند. برای سامان کیش ابتدا فیلدهای callback را اعتبارسنجی کنید و سپس `RefNum` را به‌عنوان `VerifyRequest.TransactionID` بفرستید؛ توکن ایجاد پرداخت را برای verify ارسال نکنید. همچنین از استفاده یک `RefNum` برای بیش از یک سفارش جلوگیری کنید.
+سامان کیش پس از پرداخت یک `RefNum` جدید به callback ارسال می‌کند. برای سامان کیش ابتدا فیلدهای callback را اعتبارسنجی کنید و سپس `RefNum` را به‌عنوان `VerifyRequest.TransactionID` بفرستید؛ توکن ایجاد پرداخت را برای verify ارسال نکنید. همچنین از استفاده یک `RefNum` برای بیش از یک سفارش جلوگیری کنید.
 
 ## تنظیم درگاه‌ها
 
@@ -149,9 +149,9 @@ gateway, err := nextpay.New(nextpay.Config{
 })
 ```
 
-NextPay ارزهای IRR و IRT را می‌پذیرد. ایجاد پرداخت به مبلغ مثبت، `OrderID` غیرخالی و آدرس callback مطلق نیاز دارد. اگر `HTTPClient` برابر nil باشد، درگاه از یک کلاینت HTTP با timeout سی‌ثانیه‌ای استفاده می‌کند.
+نکست پی ارزهای IRR و IRT را می‌پذیرد. ایجاد پرداخت به مبلغ مثبت، `OrderID` غیرخالی و آدرس callback مطلق نیاز دارد. اگر `HTTPClient` برابر nil باشد، درگاه از یک کلاینت HTTP با timeout سی‌ثانیه‌ای استفاده می‌کند.
 
-NextPay در صورت وجود، این کلیدهای اختیاری `PurchaseRequest.Metadata` را ارسال می‌کند: `customer_phone`، `payer_name` و `allowed_card`.
+نکست پی در صورت وجود، این کلیدهای اختیاری `PurchaseRequest.Metadata` را ارسال می‌کند: `customer_phone`، `payer_name` و `allowed_card`.
 
 ### سامان کیش
 
@@ -197,7 +197,7 @@ _ = nextpayClient
 
 ## بازپرداخت
 
-NextPay قابلیت اختیاری `payment.Refunder` را پیاده‌سازی می‌کند. زرین‌پال و SEP در حال حاضر از آن پشتیبانی نمی‌کنند.
+نکست پی قابلیت اختیاری `payment.Refunder` را پیاده‌سازی می‌کند. زرین‌پال و سامان کیش در حال حاضر از آن پشتیبانی نمی‌کنند.
 
 ```go
 refund, err := client.Refund(ctx, payment.RefundRequest{
