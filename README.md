@@ -47,6 +47,7 @@ import (
 | --- | :---: | :---: | :---: | --- | :---: |
 | [ZarinPal](https://www.zarinpal.com/) | ✅  | ✅  | ❌ | IRR | ✅  |
 | [NextPay](https://nextpay.org/) | ✅  | ✅  | ✅  | IRR, IRT | ❌ |
+| [SEP](https://www.sep.ir/) | ✅ | ✅ | ❌ | IRR | ❌ |
 
 Refunding is an optional capability. Calling `Client.Refund` with a gateway that does not implement `payment.Refunder` returns `payment.ErrUnsupported`.
 
@@ -123,6 +124,8 @@ Make callback processing idempotent. Store the verified state before fulfillment
 
 ZarinPal response codes `100` (verified) and `101` (already verified) both return a paid transaction without an error.
 
+SEP returns a new `RefNum` to the callback after payment. For SEP, validate the callback fields and pass that `RefNum` as `VerifyRequest.TransactionID`; do not pass the purchase token. Prevent a `RefNum` from being used for more than one order.
+
 ## Provider configuration
 
 ### ZarinPal
@@ -149,6 +152,19 @@ gateway, err := nextpay.New(nextpay.Config{
 NextPay accepts IRR and IRT. Purchases require a positive amount, a non-empty `OrderID`, and an absolute callback URL. If `HTTPClient` is nil, the provider uses an HTTP client with a 30-second timeout.
 
 NextPay forwards these optional `PurchaseRequest.Metadata` keys when present: `customer_phone`, `payer_name`, and `allowed_card`.
+
+### SEP
+
+```go
+gateway, err := sep.New(sep.Config{
+	TerminalID: 12345678,
+	HTTPClient: httpClient, // Optional.
+})
+```
+
+SEP accepts IRR. Purchases require a positive amount, a non-empty `OrderID`, and an absolute callback URL. If `HTTPClient` is nil, the provider uses an HTTP client with a 30-second timeout.
+
+SEP requires the merchant server's public IP to be registered. After a successful callback, verify its `RefNum` within 30 minutes and compare it with the stored order and amount. SEP does not publish a general sandbox endpoint.
 
 ## Multiple gateways
 
@@ -181,7 +197,7 @@ _ = nextpayClient
 
 ## Refunds
 
-NextPay implements the optional `payment.Refunder` capability. ZarinPal currently does not.
+NextPay implements the optional `payment.Refunder` capability. ZarinPal and SEP currently do not.
 
 ```go
 refund, err := client.Refund(ctx, payment.RefundRequest{

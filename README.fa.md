@@ -47,6 +47,7 @@ import (
 | --- | :---: | :---: | :---: | --- | :---: |
 | [ZarinPal](https://www.zarinpal.com/) | ✅  | ✅  | ❌ | IRR | ✅  |
 | [NextPay](https://nextpay.org/) | ✅  | ✅  | ✅  | IRR, IRT | ❌ |
+| [SEP](https://www.sep.ir/) | ✅ | ✅ | ❌ | IRR | ❌ |
 
 بازپرداخت یک قابلیت اختیاری است. فراخوانی `Client.Refund` برای درگاهی که `payment.Refunder` را پیاده‌سازی نکرده باشد، خطای `payment.ErrUnsupported` را برمی‌گرداند.
 
@@ -123,6 +124,8 @@ if transaction.Status == payment.StatusPaid {
 
 کدهای `100` (تأییدشده) و `101` (قبلاً تأییدشده) زرین‌پال هر دو یک تراکنش پرداخت‌شده و بدون خطا برمی‌گردانند.
 
+SEP پس از پرداخت یک `RefNum` جدید به callback ارسال می‌کند. برای SEP ابتدا فیلدهای callback را اعتبارسنجی کنید و سپس `RefNum` را به‌عنوان `VerifyRequest.TransactionID` بفرستید؛ توکن ایجاد پرداخت را برای verify ارسال نکنید. همچنین از استفاده یک `RefNum` برای بیش از یک سفارش جلوگیری کنید.
+
 ## تنظیم درگاه‌ها
 
 ### زرین‌پال
@@ -149,6 +152,19 @@ gateway, err := nextpay.New(nextpay.Config{
 NextPay ارزهای IRR و IRT را می‌پذیرد. ایجاد پرداخت به مبلغ مثبت، `OrderID` غیرخالی و آدرس callback مطلق نیاز دارد. اگر `HTTPClient` برابر nil باشد، درگاه از یک کلاینت HTTP با timeout سی‌ثانیه‌ای استفاده می‌کند.
 
 NextPay در صورت وجود، این کلیدهای اختیاری `PurchaseRequest.Metadata` را ارسال می‌کند: `customer_phone`، `payer_name` و `allowed_card`.
+
+### SEP
+
+```go
+gateway, err := sep.New(sep.Config{
+	TerminalID: 12345678,
+	HTTPClient: httpClient, // Optional.
+})
+```
+
+SEP ارز IRR را می‌پذیرد. ایجاد پرداخت به مبلغ مثبت، `OrderID` غیرخالی و آدرس callback مطلق نیاز دارد. اگر `HTTPClient` برابر nil باشد، درگاه از یک کلاینت HTTP با timeout سی‌ثانیه‌ای استفاده می‌کند.
+
+IP عمومی سرور پذیرنده باید در SEP ثبت شده باشد. پس از callback موفق، `RefNum` را حداکثر ظرف ۳۰ دقیقه verify کرده و آن را با سفارش و مبلغ ذخیره‌شده تطبیق دهید. SEP محیط sandbox عمومی ارائه نمی‌کند.
 
 ## استفاده از چند درگاه
 
@@ -181,7 +197,7 @@ _ = nextpayClient
 
 ## بازپرداخت
 
-NextPay قابلیت اختیاری `payment.Refunder` را پیاده‌سازی می‌کند. زرین‌پال در حال حاضر از آن پشتیبانی نمی‌کند.
+NextPay قابلیت اختیاری `payment.Refunder` را پیاده‌سازی می‌کند. زرین‌پال و SEP در حال حاضر از آن پشتیبانی نمی‌کنند.
 
 ```go
 refund, err := client.Refund(ctx, payment.RefundRequest{
