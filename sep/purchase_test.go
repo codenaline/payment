@@ -87,6 +87,11 @@ func TestPurchaseValidatesRequest(t *testing.T) {
 			request.Amount.Currency = payment.CurrencyIRT
 			return request
 		}(),
+		"unsupported callback scheme": func() payment.PurchaseRequest {
+			request := valid
+			request.CallbackURL = "ftp://example.com/callback"
+			return request
+		}(),
 		"relative callback": func() payment.PurchaseRequest {
 			request := valid
 			request.CallbackURL = "/callback"

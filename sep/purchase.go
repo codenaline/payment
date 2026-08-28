@@ -79,8 +79,8 @@ func validatePurchase(request payment.PurchaseRequest) error {
 		return fmt.Errorf("%w: SEP requires IRR", payment.ErrInvalidRequest)
 	}
 	callback, err := url.ParseRequestURI(request.CallbackURL)
-	if err != nil || callback.Scheme == "" || callback.Host == "" {
-		return fmt.Errorf("%w: callback URL must be absolute", payment.ErrInvalidRequest)
+	if err != nil || callback.Host == "" || (callback.Scheme != "http" && callback.Scheme != "https") {
+		return fmt.Errorf("%w: callback URL must be an absolute HTTP(S) URL", payment.ErrInvalidRequest)
 	}
 	return nil
 }
