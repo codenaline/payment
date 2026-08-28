@@ -12,13 +12,15 @@
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
+<p align="center">
+  English | <a href="README.fa.md">پارسی</a>
+</p>
+
 # Payment
 
-Payment is a provider-agnostic payment library for Go.
+`payment` is a provider-neutral payment package for Go. It provides a small common API for purchasing, verifying, and optionally refunding payments while keeping provider configuration and protocol details in dedicated packages.
 
-It defines a small, consistent API for creating, verifying, and optionally refunding payments, allowing applications to work with multiple payment gateways without being tied to a specific provider.
-
-Each gateway lives in its own package, making integrations easy to extend while keeping provider-specific protocols, configuration, and errors isolated from application code.
+Each client is bound to one gateway. There is no global registry or mutable default, so applications remain in control of provider selection, persistence, retries, reconciliation, and business rules.
 
 ## Requirements
 
@@ -26,11 +28,11 @@ Each gateway lives in its own package, making integrations easy to extend while 
 
 ## Installation
 
-Install the module and import only the providers your application uses:
-
 ```sh
 go get github.com/codenaline/payment@latest
 ```
+
+Import the root package and only the provider packages your application uses:
 
 ```go
 import (
@@ -39,34 +41,18 @@ import (
 )
 ```
 
-## Supported drivers
+## Supported providers
 
 | Provider | Purchase | Verify | Refund | Currencies | Sandbox |
 | --- | :---: | :---: | :---: | --- | :---: |
-| [ZarinPal](zarinpal) | Yes | Yes | No | IRR | Yes |
-| [NextPay](nextpay) | Yes | Yes | Yes | IRR, IRT | No |
+| [ZarinPal](https://www.zarinpal.com/) | ✅  | ✅  | ❌ | IRR | ✅  |
+| [NextPay](https://nextpay.org/) | ✅  | ✅  | ✅  | IRR, IRT | ❌ |
 
-Refund support is exposed as an optional capability. A custom gateway can implement the core `payment.Gateway` interface and, when applicable, `payment.Refunder`.
-
-## Upcoming drivers
-
-The following drivers are candidates for future releases:
-
-- Zibal
-- IDPay
-- Pay.ir
-- Stripe
-
-This list is not a delivery commitment and has no fixed order. If you need one
-of these drivers—or another provider—you are welcome to implement it and
-[create a pull request](https://github.com/codenaline/payment/compare). Read the
-[contribution guide](CONTRIBUTING.md) first, and open a
-[provider integration proposal](https://github.com/codenaline/payment/issues/new?template=feature_request.yml)
-when the API or expected behavior needs discussion.
+Refunding is an optional capability. Calling `Client.Refund` with a gateway that does not implement `payment.Refunder` returns `payment.ErrUnsupported`.
 
 ## Quick start
 
-Create a gateway, wrap it in a client, and initiate a payment:
+Create a gateway, bind it to a client, and initiate a payment:
 
 ```go
 package main
@@ -102,18 +88,19 @@ func main() {
 		panic(err)
 	}
 
-	// Persist result.Transaction.ID with the order before redirecting the payer.
+	// Store the transaction before redirecting the customer.
+	fmt.Println(result.Transaction.ID)
 	fmt.Println(result.RedirectURL)
 }
 ```
 
-Redirect the payer to `PurchaseResponse.RedirectURL`. Persist the transaction ID, order ID, amount, currency, and status in your own database.
+Persist the transaction ID, order ID, amount, currency, and current status before redirecting the customer to `PurchaseResponse.RedirectURL`.
 
-`Money.Amount` is an integer in the selected currency unit. The package does not convert between currencies or units; use the unit required by the configured provider.
+`Money.Amount` is an integer expressed in the selected currency unit. The package does not convert currencies or units; pass the unit expected by the configured provider.
 
 ## Verify a payment
 
-After the provider redirects the payer to your callback endpoint, verify the transaction on a trusted server using the stored transaction ID and original amount:
+The browser callback is not proof of payment. After the provider redirects the customer, verify the transaction from a trusted server using the stored transaction ID and original amount:
 
 ```go
 transaction, err := client.Verify(ctx, payment.VerifyRequest{
@@ -132,24 +119,51 @@ if transaction.Status == payment.StatusPaid {
 }
 ```
 
-A browser redirect alone is not proof of payment. Callback handlers should be idempotent: persist the verified state and return the existing successful result when a paid callback is repeated.
+Make callback processing idempotent. Store the verified state before fulfillment and return the existing successful result when the same paid callback is received again.
 
-ZarinPal verification codes `100` (verified now) and `101` (already verified) both produce a paid transaction without an error.
+ZarinPal response codes `100` (verified) and `101` (already verified) both return a paid transaction without an error.
+
+## Provider configuration
+
+### ZarinPal
+
+```go
+gateway, err := zarinpal.New(zarinpal.Config{
+	MerchantID: "your-merchant-id",
+	Sandbox:    true,       // Optional; false by default.
+	HTTPClient: httpClient, // Optional.
+})
+```
+
+ZarinPal accepts IRR. Purchases require a positive amount, an absolute callback URL, and a non-empty description. If `HTTPClient` is nil, the provider uses an HTTP client with a 30-second timeout.
+
+### NextPay
+
+```go
+gateway, err := nextpay.New(nextpay.Config{
+	APIKey:     "your-api-key",
+	HTTPClient: httpClient, // Optional.
+})
+```
+
+NextPay accepts IRR and IRT. Purchases require a positive amount, a non-empty `OrderID`, and an absolute callback URL. If `HTTPClient` is nil, the provider uses an HTTP client with a 30-second timeout.
+
+NextPay forwards these optional `PurchaseRequest.Metadata` keys when present: `customer_phone`, `payer_name`, and `allowed_card`.
 
 ## Multiple gateways
 
-Create an independent client for each configured gateway. The application decides which client to use:
+Create one client for each configured gateway and keep provider selection in the application:
 
 ```go
 zarinpalGateway, err := zarinpal.New(zarinpal.Config{
-	MerchantID: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+	MerchantID: "your-merchant-id",
 })
 if err != nil {
 	return err
 }
 
 nextpayGateway, err := nextpay.New(nextpay.Config{
-	APIKey: "nextpay-api-key",
+	APIKey: "your-api-key",
 })
 if err != nil {
 	return err
@@ -163,36 +177,11 @@ _ = zarinpalClient
 _ = nextpayClient
 ```
 
-A client does not switch or mutate its gateway after construction. There is no global gateway registry.
-
-## Provider configuration
-
-### ZarinPal
-
-```go
-gateway, err := zarinpal.New(zarinpal.Config{
-	MerchantID: "your-merchant-id",
-	Sandbox:    true,       // Optional; defaults to false.
-	HTTPClient: httpClient, // Optional.
-})
-```
-
-ZarinPal accepts IRR. When `HTTPClient` is nil, the driver uses its default HTTP client with a 30-second timeout.
-
-### NextPay
-
-```go
-gateway, err := nextpay.New(nextpay.Config{
-	APIKey:     "your-api-key",
-	HTTPClient: httpClient, // Optional.
-})
-```
-
-NextPay accepts IRR and IRT and requires `PurchaseRequest.OrderID` when creating a payment.
+`payment.NewClient` panics when passed a nil gateway. A client cannot switch gateways after construction.
 
 ## Refunds
 
-Refund is an optional gateway capability. `Client.Refund` returns `payment.ErrUnsupported` when the configured gateway does not implement it:
+NextPay implements the optional `payment.Refunder` capability. ZarinPal currently does not.
 
 ```go
 refund, err := client.Refund(ctx, payment.RefundRequest{
@@ -205,6 +194,8 @@ if errors.Is(err, payment.ErrUnsupported) {
 }
 ```
 
+Applications should persist the refund result and reconcile it according to their own policies.
+
 ## Error handling
 
 The root package exposes portable sentinel errors. Use `errors.Is` for provider-independent decisions:
@@ -212,21 +203,21 @@ The root package exposes portable sentinel errors. Use `errors.Is` for provider-
 ```go
 switch {
 case errors.Is(err, payment.ErrInvalidRequest):
-	// Correct the request; retrying it unchanged will not help.
+	// Fix the request; retrying it unchanged will not help.
 case errors.Is(err, payment.ErrNetwork):
 	// Apply the application's retry and reconciliation policy.
 case errors.Is(err, payment.ErrDeclined):
 	// Ask the customer to use another payment method.
 case errors.Is(err, payment.ErrTransactionNotFound):
-	// Reconcile the stored transaction information.
+	// Reconcile the stored transaction details.
 case errors.Is(err, payment.ErrCanceled):
-	// Record that the payment was canceled.
+	// Record the canceled payment.
 case errors.Is(err, payment.ErrProvider):
 	// Handle an unclassified provider failure.
 }
 ```
 
-Provider packages expose their own error types. Use `errors.As` only when provider-specific diagnostics are needed:
+Provider packages expose typed errors for diagnostics. Use `errors.As` only when provider-specific details are needed:
 
 ```go
 var providerError *zarinpal.Error
@@ -239,11 +230,11 @@ if errors.As(err, &providerError) {
 }
 ```
 
-Do not expose provider errors directly to customers when they may contain operational details.
+Avoid showing raw provider errors to customers because they may contain operational details.
 
 ## Custom gateways
 
-Implement `payment.Gateway` to integrate another provider without registering it globally:
+Implement `payment.Gateway` to add a provider without global registration:
 
 ```go
 type CustomGateway struct{}
@@ -265,35 +256,25 @@ func (*CustomGateway) Verify(
 client := payment.NewClient(&CustomGateway{})
 ```
 
-Implement `payment.Refunder` if the provider supports refunds. Custom gateways should wrap the portable sentinel errors and expose a provider-specific error type when callers need additional details.
+Implement `payment.Refunder` when the provider supports refunds. Custom providers should wrap the root sentinel errors and expose a provider-specific error type when callers need more detail.
 
-## Project scope
+## Application responsibilities
 
-The package provides:
+This package intentionally does not manage:
 
-- Common payment types and gateway interfaces
-- Immutable clients bound to one gateway
-- Bundled ZarinPal and NextPay drivers
-- Portable and provider-specific error handling
-- Optional gateway capabilities such as refunds
-
-Applications remain responsible for:
-
-- Gateway selection and routing
-- Transaction and order persistence
-- Callback validation and idempotency
+- Gateway selection or routing
+- Transaction, order, and refund persistence
+- Callback authentication and idempotency
 - Retry, timeout, and reconciliation policies
-- Logging, metrics, and tracing
-- Fulfillment and all other business rules
+- Logging, metrics, or tracing
+- Fulfillment and other business rules
 
-## Contributing
+Never commit credentials or include merchant IDs, API keys, customer information, or complete callback data in logs and public bug reports.
 
-Pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+## Contributing and support
 
-## Credits
-
-- [Mahdi Rezaei](https://github.com/mahdirezaei-dev)
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Use [GitHub Discussions](https://github.com/codenaline/payment/discussions) for usage questions and follow [SECURITY.md](SECURITY.md) to report vulnerabilities privately.
 
 ## License
 
-The MIT License. See [LICENSE](LICENSE) for details.
+Released under the [MIT License](LICENSE).
