@@ -106,7 +106,7 @@ func TestPurchaseValidatesRequest(t *testing.T) {
 
 func TestPurchaseReturnsProviderError(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		_, _ = w.Write([]byte(`{"status":-1,"errorCode":"5","errorDesc":"invalid parameters"}`))
+		_, _ = w.Write([]byte(`{"status":-1,"errorCode":"99","errorDesc":"provider failure"}`))
 	}))
 	t.Cleanup(server.Close)
 

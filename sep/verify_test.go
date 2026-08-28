@@ -92,8 +92,8 @@ func TestVerifyValidatesRequest(t *testing.T) {
 func TestVerifyRejectsProviderFailure(t *testing.T) {
 	gateway := verificationGateway(t, `{
 		"TransactionDetail": {},
-		"ResultCode": -2,
-		"ResultDescription": "transaction not found",
+		"ResultCode": -999,
+		"ResultDescription": "provider failure",
 		"Success": false
 	}`)
 

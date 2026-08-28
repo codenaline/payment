@@ -45,19 +45,19 @@ func (g *Gateway) Verify(ctx context.Context, request payment.VerifyRequest) (pa
 	}
 	var response verifyResponse
 	if err := g.post(ctx, g.verifyURL, payload, &response); err != nil {
-		return payment.Transaction{}, fmt.Errorf("SEP verification: %w", err)
+		return payment.Transaction{}, newError("verification", 0, "request failed", err)
 	}
 	if !response.Success || response.ResultCode != 0 {
-		return payment.Transaction{}, fmt.Errorf("%w: SEP verification failed with code %d: %s", payment.ErrProvider, response.ResultCode, response.ResultDescription)
+		return payment.Transaction{}, newError("verification", response.ResultCode, response.ResultDescription, nil)
 	}
 	if response.TransactionDetail.RefNum != request.TransactionID {
-		return payment.Transaction{}, fmt.Errorf("%w: SEP returned a different reference number", payment.ErrProvider)
+		return payment.Transaction{}, newError("verification", 0, "provider returned a different reference number", payment.ErrProvider)
 	}
 	if response.TransactionDetail.TerminalNumber != g.terminalID {
-		return payment.Transaction{}, fmt.Errorf("%w: SEP returned a different terminal number", payment.ErrProvider)
+		return payment.Transaction{}, newError("verification", 0, "provider returned a different terminal number", payment.ErrProvider)
 	}
 	if response.TransactionDetail.OrginalAmount != request.Amount.Amount {
-		return payment.Transaction{}, fmt.Errorf("%w: SEP returned a different amount", payment.ErrProvider)
+		return payment.Transaction{}, newError("verification", 0, "provider returned a different amount", payment.ErrProvider)
 	}
 
 	return payment.Transaction{

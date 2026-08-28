@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/codenaline/payment"
@@ -41,15 +42,16 @@ func (g *Gateway) Purchase(ctx context.Context, request payment.PurchaseRequest)
 	}
 	var response tokenResponse
 	if err := g.post(ctx, g.tokenURL, payload, &response); err != nil {
-		return payment.PurchaseResponse{}, fmt.Errorf("SEP purchase: %w", err)
+		return payment.PurchaseResponse{}, newError("purchase", 0, "request failed", err)
 	}
 	if response.Status != 1 || strings.TrimSpace(response.Token) == "" {
-		return payment.PurchaseResponse{}, fmt.Errorf("%w: SEP purchase failed with code %s: %s", payment.ErrProvider, response.ErrorCode, response.ErrorDesc)
+		code, _ := strconv.Atoi(response.ErrorCode)
+		return payment.PurchaseResponse{}, newError("purchase", code, response.ErrorDesc, nil)
 	}
 
 	redirectURL, err := url.Parse(g.payURL)
 	if err != nil {
-		return payment.PurchaseResponse{}, fmt.Errorf("%w: build SEP redirect URL: %w", payment.ErrProvider, err)
+		return payment.PurchaseResponse{}, newError("purchase", 0, "build redirect URL", fmt.Errorf("%w: %w", payment.ErrProvider, err))
 	}
 	query := redirectURL.Query()
 	query.Set("token", response.Token)
