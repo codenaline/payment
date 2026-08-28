@@ -45,9 +45,9 @@ import (
 
 | Provider | Purchase | Verify | Refund | Currencies | Sandbox |
 | --- | :---: | :---: | :---: | --- | :---: |
-| [ZarinPal](https://www.zarinpal.com/) | ✅  | ✅  | ❌ | IRR | ✅  |
-| [NextPay](https://nextpay.org/) | ✅  | ✅  | ✅  | IRR, IRT | ❌ |
-| [SEP](https://www.sep.ir/) | ✅ | ✅ | ❌ | IRR | ❌ |
+| [زرین پال](https://www.zarinpal.com/) | ✅  | ✅  | ❌ | IRR | ✅  |
+| [نکست پی](https://nextpay.org/) | ✅  | ✅  | ✅  | IRR, IRT | ❌ |
+| [سامان کیش](https://www.sep.ir/) | ✅ | ✅ | ❌ | IRR | ❌ |
 
 بازپرداخت یک قابلیت اختیاری است. فراخوانی `Client.Refund` برای درگاهی که `payment.Refunder` را پیاده‌سازی نکرده باشد، خطای `payment.ErrUnsupported` را برمی‌گرداند.
 
@@ -124,7 +124,7 @@ if transaction.Status == payment.StatusPaid {
 
 کدهای `100` (تأییدشده) و `101` (قبلاً تأییدشده) زرین‌پال هر دو یک تراکنش پرداخت‌شده و بدون خطا برمی‌گردانند.
 
-SEP پس از پرداخت یک `RefNum` جدید به callback ارسال می‌کند. برای SEP ابتدا فیلدهای callback را اعتبارسنجی کنید و سپس `RefNum` را به‌عنوان `VerifyRequest.TransactionID` بفرستید؛ توکن ایجاد پرداخت را برای verify ارسال نکنید. همچنین از استفاده یک `RefNum` برای بیش از یک سفارش جلوگیری کنید.
+SEP پس از پرداخت یک `RefNum` جدید به callback ارسال می‌کند. برای سامان کیش ابتدا فیلدهای callback را اعتبارسنجی کنید و سپس `RefNum` را به‌عنوان `VerifyRequest.TransactionID` بفرستید؛ توکن ایجاد پرداخت را برای verify ارسال نکنید. همچنین از استفاده یک `RefNum` برای بیش از یک سفارش جلوگیری کنید.
 
 ## تنظیم درگاه‌ها
 
@@ -140,7 +140,7 @@ gateway, err := zarinpal.New(zarinpal.Config{
 
 زرین‌پال ارز IRR را می‌پذیرد. ایجاد پرداخت به مبلغ مثبت، آدرس callback مطلق و توضیح غیرخالی نیاز دارد. اگر `HTTPClient` برابر nil باشد، درگاه از یک کلاینت HTTP با timeout سی‌ثانیه‌ای استفاده می‌کند.
 
-### NextPay
+### نکست پی
 
 ```go
 gateway, err := nextpay.New(nextpay.Config{
@@ -153,7 +153,7 @@ NextPay ارزهای IRR و IRT را می‌پذیرد. ایجاد پرداخت 
 
 NextPay در صورت وجود، این کلیدهای اختیاری `PurchaseRequest.Metadata` را ارسال می‌کند: `customer_phone`، `payer_name` و `allowed_card`.
 
-### SEP
+### سامان کیش
 
 ```go
 gateway, err := sep.New(sep.Config{
@@ -162,9 +162,9 @@ gateway, err := sep.New(sep.Config{
 })
 ```
 
-SEP ارز IRR را می‌پذیرد. ایجاد پرداخت به مبلغ مثبت، `OrderID` غیرخالی و آدرس callback مطلق نیاز دارد. اگر `HTTPClient` برابر nil باشد، درگاه از یک کلاینت HTTP با timeout سی‌ثانیه‌ای استفاده می‌کند.
+سامان کیش ارز IRR را می‌پذیرد. ایجاد پرداخت به مبلغ مثبت، `OrderID` غیرخالی و آدرس callback مطلق نیاز دارد. اگر `HTTPClient` برابر nil باشد، درگاه از یک کلاینت HTTP با timeout سی‌ثانیه‌ای استفاده می‌کند.
 
-IP عمومی سرور پذیرنده باید در SEP ثبت شده باشد. پس از callback موفق، `RefNum` را حداکثر ظرف ۳۰ دقیقه verify کرده و آن را با سفارش و مبلغ ذخیره‌شده تطبیق دهید. SEP محیط sandbox عمومی ارائه نمی‌کند.
+IP عمومی سرور پذیرنده باید در سامان کیش ثبت شده باشد. پس از callback موفق، `RefNum` را حداکثر ظرف ۳۰ دقیقه verify کرده و آن را با سفارش و مبلغ ذخیره‌شده تطبیق دهید. سامان کیش محیط sandbox عمومی ارائه نمی‌کند.
 
 ## استفاده از چند درگاه
 
