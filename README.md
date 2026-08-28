@@ -14,9 +14,11 @@
 
 # Payment
 
-`payment` is a small, provider-neutral payment package for Go. It defines common contracts for creating, verifying, and optionally refunding payments while keeping provider configuration, protocols, and errors in provider packages.
+Payment is a provider-agnostic payment library for Go.
 
-The package deliberately does not manage gateway selection, routing, persistence, retries, reconciliation, or business rules. Applications can configure several gateways by creating one immutable client for each gateway.
+It defines a small, consistent API for creating, verifying, and optionally refunding payments, allowing applications to work with multiple payment gateways without being tied to a specific provider.
+
+Each gateway lives in its own package, making integrations easy to extend while keeping provider-specific protocols, configuration, and errors isolated from application code.
 
 ## Requirements
 
