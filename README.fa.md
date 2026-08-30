@@ -172,8 +172,8 @@ IP عمومی سرور پذیرنده باید در سامان کیش ثبت ش�
 ```go
 gateway, err := aqayepardakht.New(aqayepardakht.Config{
 	Pin:        "your-gateway-pin",
-	Sandbox:    true,       // اختیاری؛ مقدار پیش‌فرض false است.
-	HTTPClient: httpClient, // اختیاری.
+	Sandbox:    true,       // Optional; false by default.
+	HTTPClient: httpClient, // Optional.
 })
 ```
 
