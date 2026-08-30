@@ -48,6 +48,7 @@ import (
 | [ZarinPal](https://www.zarinpal.com/) | ✅  | ✅  | ❌ | IRR | ✅  |
 | [NextPay](https://nextpay.org/) | ✅  | ✅  | ✅  | IRR, IRT | ❌ |
 | [SEP](https://www.sep.ir/) | ✅ | ✅ | ❌ | IRR | ❌ |
+| [Aghaye Pardakht](https://aqayepardakht.ir/) | ✅ | ✅ | ❌ | IRR, IRT | ✅ |
 
 Refunding is an optional capability. Calling `Client.Refund` with a gateway that does not implement `payment.Refunder` returns `payment.ErrUnsupported`.
 
@@ -166,6 +167,20 @@ SEP accepts IRR. Purchases require a positive amount, a non-empty `OrderID`, and
 
 SEP requires the merchant server's public IP to be registered. After a successful callback, verify its `RefNum` within 30 minutes and compare it with the stored order and amount. SEP does not publish a general sandbox endpoint.
 
+### Aghaye Pardakht
+
+```go
+gateway, err := aqayepardakht.New(aqayepardakht.Config{
+	Pin:        "your-gateway-pin",
+	Sandbox:    true,       // Optional; false by default.
+	HTTPClient: httpClient, // Optional.
+})
+```
+
+Aghaye Pardakht accepts IRR and IRT but its API operates in toman. IRT amounts are sent unchanged; IRR amounts must be divisible by 10 and are converted to toman. The converted amount must be between 100 and 50,000,000 toman. Purchases also require a non-empty `OrderID` and an absolute HTTP(S) callback URL. If `HTTPClient` is nil, the provider uses an HTTP client with a 30-second timeout.
+
+The driver forwards the optional `PurchaseRequest.Metadata` keys `card_number`, `mobile`, and `email`. Sandbox mode uses the provider's sandbox payment redirect while creation and verification continue through its v2 API. Store the purchase `Transaction.ID`, ensure the callback `transid` belongs to that pending transaction, and pass it to `Verify`. Verification code `2` (already verified) is treated as paid for idempotent callback handling.
+
 ## Multiple gateways
 
 Create one client for each configured gateway and keep provider selection in the application:
@@ -197,7 +212,7 @@ _ = nextpayClient
 
 ## Refunds
 
-NextPay implements the optional `payment.Refunder` capability. ZarinPal and SEP currently do not.
+NextPay implements the optional `payment.Refunder` capability. ZarinPal, SEP, and Aghaye Pardakht currently do not.
 
 ```go
 refund, err := client.Refund(ctx, payment.RefundRequest{

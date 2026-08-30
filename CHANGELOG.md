@@ -10,6 +10,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 ### Added
 
 - SEP purchase and verification support with portable provider errors.
+- Aghaye Pardakht purchase and verification support, including sandbox redirects, IRR/IRT handling, and portable provider errors.
 
 ## [0.1.0] - 2026-08-28
 
